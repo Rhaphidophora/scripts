@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Copyright Raphidophora
+
+# This script makes use of Fred Weinhaus' script color2alpha available at http://www.fmwconcepts.com/imagemagick/color2alpha/index.php
+
+
+
+
+day=$(date +"%Y%m%d")
+kod=32737 #Bratislava (centrum)
+cas=0600
+
+filename=$(date +%F).png
+
+adress="https://www.shmu.sk/data/datanwp/v2/epsgram_a-laef/a-laef-epsgram_$kod-${day}-0000-nwp-.png"
+
+wget -O "./SHMU/img/$filename" $adress
+
+convert "./SHMU/img/$filename" -colorspace gray "./SHMU/img/grayscale-${filename}"
+
+
+./color2alpha -ca white -g 0.5 "./SHMU/img/grayscale-${filename}" "./SHMU/img/alpha-${filename}"
+
+convert ./SHMU/img/alpha-${filename} -gravity South -chop 0x1500 ./SHMU/img/alpha-cropped-${filename}
+
+composite -gravity southeast -geometry 500x+100+20 ./SHMU/img/alpha-cropped-$filename ./SHMU/wallpaper.png ./SHMU/wallpaper-over-${day}.png
